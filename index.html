@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Для Софы 🤍</title>
+    <style>
+        :root { --bg-color: #fff5f5; --primary-color: #ff7b93; --accent-color: #ff4d6d; --text-color: #4a4a4a; --card-bg: #ffffff; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); padding: 20px; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; position: relative; }
+        header { text-align: center; margin-bottom: 20px; max-width: 600px; }
+        header h1 { color: var(--accent-color); font-size: 2.5rem; margin-bottom: 10px; }
+        header p { font-size: 1.1rem; line-height: 1.6; color: #666; }
+        
+        /* Главный золотый подарок */
+        .main-gift-container { margin-bottom: 30px; text-align: center; width: 100%; max-width: 900px; position: relative; }
+        .gold-gift { display: inline-flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(135deg, #ffe066, #f5b041); border: 3px solid #f39c12; border-radius: 20px; padding: 20px 40px; font-size: 1.5rem; font-weight: bold; color: #784212; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 6px 15px rgba(243, 156, 18, 0.3); }
+        .gold-gift:hover { transform: scale(1.05); box-shadow: 0 8px 25px rgba(243, 156, 18, 0.5); }
+        .gold-gift.opened { background: #fff; border-color: var(--accent-color); color: var(--accent-color); font-size: 1.7rem; padding: 30px 50px; transform: scale(1.1); cursor: default; }
+        .gold-gift span { font-size: 2.5rem; margin-bottom: 5px; }
+
+        /* Сетка подарков без модальных окон */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; width: 100%; max-width: 900px; margin-bottom: 50px; }
+        .gift-box { aspect-ratio: 1; background-color: var(--card-bg); border: 2px solid var(--primary-color); border-radius: 12px; display: flex; flex-direction: column; justify-content: center; align-items: center; font-weight: bold; font-size: 1.2rem; color: var(--accent-color); cursor: pointer; transition: all 0.4s ease; box-shadow: 0 4px 6px rgba(255, 123, 147, 0.1); padding: 10px; text-align: center; overflow: hidden; }
+        .gift-box:hover { transform: scale(1.05); background-color: #ffe3e8; }
+        
+        /* Стиль открытой коробки: текст внутри */
+        .gift-box.opened { background-color: #fff0f2; color: var(--text-color); border-color: var(--accent-color); font-size: 0.85rem; font-weight: normal; line-height: 1.3; cursor: default; transform: none; box-shadow: inset 0 2px 5px rgba(0,0,0,0.05); }
+
+        /* Анимация летящих сердечек */
+        .heart-particle { position: fixed; font-size: 2rem; pointer-events: none; z-index: 9999; animation: floatUp 1.5s ease-out forwards; }
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(0.5) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-150px) scale(1.5) rotate(var(--rot)); opacity: 0; }
+        }
+
+        footer { margin-top: auto; text-align: center; padding: 20px; color: #888; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Софа, с днем рождения! 🌸</h1>
+        <p>Я знаю, что ты бываешь сложной, переживаешь из-за настроения или прошлого. Но для меня ты самая особенная. Здесь 100 подарков - нажимай на каждый, чтобы открыть причину прямо внутри коробки.</p>
+    </header>
+
+    <div class="main-gift-container">
+        <div class="gold-gift" id="goldGift" onclick="openGoldGift()">
+            <span>💝</span>
+            <div id="goldText">Главный подарок (под конец)</div>
+        </div>
+    </div>
+
+    <div class="grid" id="giftsGrid"></div>
+    
+    <footer>Я рядом всегда, мой выбор окончательный. ✨</footer>
+    
+    <script>
+       const reasons = [
+    "Ты - особенная, таких на свете больше нет.", "Мне безумно нравится твоя честность.", "Твоя «сложная» голова делает тебя уникальной.", "Для меня ты безумно красивая, и точка.", "С тобой я могу быть абсолютно настоящим.", "Твои перепады настроения меня вообще не пугают.", "Ты доверяешь мне свои самые сокровенные мысли.", "Я улыбаюсь каждый раз, когда вижу сообщение от тебя.", "Я люблю тебя такой, какая ты есть", "Мне с тобой легко, даже когда тебе тяжело со всеми.",
+    "Ты заставляешь меня чувствовать себя нужным.", "С тобой никогда не бывает скучно или серо.", "Я хочу защищать тебя от твоих внутренних загонов.", "Ты заслуживаешь самого лучшего и нежного отношения.", "Мне дорог абсолютно каждый миллиметр в тебе.", "Ты намного сильнее, чем сама о себе думаешь.", "Твоё «я не знаю» звучит безумно мило.", "Я ценю, что ты выбрала именно меня, чтобы открыться.", "Ты умеешь быть невероятно нежной и хрупкой.", "Я железобетонно уверен в нас, что бы ни случилось.",
+    "С тобой время пролетает незаметно.", "Твой голос - лучшее успокоительное для меня.", "Ты умеешь удивлять своими мыслями.", "Мне важен твой комфорт и твоё спокойствие.", "Ты - единственная, о ком я думаю перед сном.", "Мне нравится узнавать тебя настоящую, без масок.", "Твои капризы кажутся мне очень милыми.", "Ты заставляешь меня становиться лучше ради тебя.", "Я хочу делить с тобой и радость, и твои грустные дни.", "Ты не такая, как все сверстники, и это твой огромный плюс.",
+    "Мне нравится твой стиль и твой вкус.", "Я готов слушать тебя часами.", "Ты заменяешь мне весь мир, когда мы общаемся.", "Мне важна каждая твоя маленькая победа за день.", "Твои загоны - это просто повод обнять тебя крепче.", "С тобой я чувствую себя на своем месте.", "Ты умеешь зацепить так, что другие просто блекнут.", "Я хочу быть твоей главной опорой и безопасным местом.", "Твой характер - это огонь, который мне нравится.", "Ты заслуживаешь знать, что ты любима каждый день.",
+    "Мне нравится, как ты аккуратно подбираешь слова.", "Я не могу без твоих «Доброе утро» по утрам.", "Ты - мой личный синоптик с самой крутой погодой.", "Твоя улыбка (пусть даже через текст) заряжает меня.", "Мне плевать на чужие стандарты, у меня есть ты.", "Я хочу доказать тебе, что ты достойна самого лучшего.", "Ты - моя личная слабость и моя сила одновременно.", "Мне нравится просто молчать с тобой обо всем.", "Ты заставляешь мое сердце биться чаще.", "Я принимаю тебя любую - сонной, грустной, злой.",
+    "Ты умеешь быть очень заботливой.", "Мне нравится твое чувство юмора.", "Ты - самое яркое событие в моей жизни за последнее время.", "Я хочу оберегать твой сон и твою улыбку.", "Твои сообщения мгновенно поднимают мне настроение.", "Ты зацепила меня с самого первого дня.", "Я верю в тебя, даже когда ты сама в себя не веришь.", "Ты заставляешь меня улыбаться экрану телефона.", "Мне нравится, как ты искренне удивляешься хорошему.", "Ты - загадка, которую я хочу разгадывать всю жизнь.",
+    "Я хочу, чтобы ты знала: ты никогда больше не будешь одна.", "Твой уют чувствуется даже через 90 километров.", "Ты особенная, и я не устану тебе это повторять.", "Мне нравится, как ты злишься, это очень мило.", "Ты - мой самый любимый человек для разговоров.", "Я хочу подарить тебе всю уверенность мира.", "Ты - лучшая версия девчонки, которую я мог встретить.", "Мне дороги твои голосовые сообщения.", "Я готов терпеть любые твои перепады характера.", "Ты делает мою жизнь в сто раз интереснее.",
+    "Мне нравится твоя глубина и то, как ты мыслишь.", "Ты - мой повод просыпаться с хорошим настроением.", "Я хочу забрать всю твою грусть себе.", "Ты безумно мило смущаешься.", "Мне нравится, что мы можем говорить обо всякой ерунде.", "Ты - девочка, ради которой хочется совершать поступки.", "Я обожаю твои споры, в них ты очень забавная.", "Ты заслуживаешь чувствовать себя в безопасности.", "Мне просто необходимо знать, что у тебя всё хорошо.", "Ты - частичка тепла в моем каждом дне.",
+    "Я не хочу и не буду искать никого 'лучше'.", "Ты заставляешь меня скучать по тебе каждую минуту.", "Мне нравится, как ты доверяешь мне свои секреты.", "Ты - лучшее, что происходит в моих буднях.", "Я хочу быть причиной твоей искренней улыбки.", "Ты вдохновляешь меня быть сильным ради нас.", "Мне нравится твоя неповторимая индивидуальность.", "Ты умеешь успокоительное одной строчкой текста.", "Я хочу пройти с тобой через любые трудности.", "Ты - моя гордость, и я хочу, чтобы ты это знала.",
+    "Мне безумно важен твой взгляд на вещи.", "Ты - тот самый человек, с которым хочется делить всё.", "Я обещаю быть рядом, когда весь мир отвернется.", "Ты делаешь меня счастливым просто тем, что ты есть.", "Мне нравится твой характер, даже когда он сложный.", "Ты - моё самое любимое исключение из всех правил.", "Я хочу обнять тебя так крепко, чтобы ушли все страхи.", "Ты заслуживаешь быть счастливой, и я приложу к этому руку.", "Ты - моя Софа, и я тебя никому не отдам.", "Я люблю тебя и хочу быть с тобой, несмотря ни на что."
+];
+
+        
+        const grid = document.getElementById('giftsGrid');
+        
+        // Создаем 100 коробок
+        for (let i = 1; i <= 100; i++) {
+            const box = document.createElement('div');
+            box.classList.add('gift-box');
+            box.id = `gift-${i}`;
+            box.innerText = `🎁 ${i}`;
+            box.onclick = () => openGift(i);
+            grid.appendChild(box);
+        }
+
+        // Логика открытия обычной причины на месте
+        function openGift(number) {
+            const box = document.getElementById(`gift-${number}`);
+            if (!box.classList.contains('opened')) {
+                box.classList.add('opened');
+                box.innerText = reasons[number - 1] || "Ты просто невероятная!";
+            }
+        }
+
+        // Логика открытия главного подарка с анимацией сердечек
+        function openGoldGift() {
+            const gold = document.getElementById('goldGift');
+            if (gold.classList.contains('opened')) return;
+
+            gold.classList.add('opened');
+            gold.innerHTML = "<span>❤️</span>Я тебя люблю ❤️";
+
+            // Создаем взрыв сердечек (25 штук)
+            const rect = gold.getBoundingClientRect();
+            for (let i = 0; i < 25; i++) {
+                const heart = document.createElement('div');
+                heart.classList.add('heart-particle');
+                heart.innerText = ['❤️', '💖', '💝', '💕', '💘'][Math.floor(Math.random() * 5)];
+                
+                // Случайный разлет по сторонам
+                const randomX = rect.left + (rect.width / 2) + (Math.random() * 200 - 100);
+                const randomY = rect.top + (rect.height / 2) + (Math.random() * 60 - 30);
+                
+                heart.style.left = `${randomX}px`;
+                heart.style.top = `${randomY}px`;
+                heart.style.setProperty('--rot', `${Math.random() * 90 - 45}deg`);
+                
+                // Небольшая задержка анимации для естественности
+                heart.style.animationDelay = `${Math.random() * 0.3}s`;
+                
+                document.body.appendChild(heart);
+                
+                // Удаляем сердечко после окончания анимации
+                setTimeout(() => heart.remove(), 1800);
+            }
+        }
+    </script>
+</body>
+</html>
